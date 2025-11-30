@@ -1,4 +1,4 @@
-name: tests.yml
+name: tests-shards.yml
 
 # виконується при таких подіях:
 on:
@@ -12,13 +12,13 @@ on:
 # перелік робіт
 jobs:
   # назва роботи
-  tests-workers:
+  tests-shards:
     # Використовується хмарне середовище GitHub з останнім образом Ubuntu
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        maxWorkers: [2, 4]
+        shard: [1, 2, 3, 4]
     steps:
       # Клонування репозиторію у середовище
       - uses: actions/checkout@v5
@@ -35,31 +35,5 @@ jobs:
         run: yarn build
 
       # Запуск тестів
-      - name: Run tests
-        run: yarn jest --maxWorkers=${{ matrix.maxWorkers }}
-
-  tests-workers-win:
-    # Використовується хмарне середовище GitHub з останнім образом Ubuntu
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        maxWorkers: [ 2, 4 ]
-    steps:
-      # Клонування репозиторію у середовище
-      - uses: actions/checkout@v5
-      # Встановлення Node.js
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: yarn
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Build packages
-        run: yarn build
-
-      # Запуск тестів
-      - name: Run tests
-        run: yarn jest --maxWorkers=${{ matrix.maxWorkers }}
+      - name: Run tests shards
+        run: yarn jest --shard=${{matrix.shard}}/4 --maxWorkers=4
