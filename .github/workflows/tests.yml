@@ -1,0 +1,60 @@
+name: tests.yml
+
+# виконується при таких подіях:
+on:
+  # додавання змін у гілку main
+  push:
+    branches: [ main ]
+  # запит на додавання змін у гілку main
+  pull_request:
+    branches: [ main ]
+
+# перелік робіт
+jobs:
+  # назва роботи
+  tests-workers:
+    # Використовується хмарне середовище GitHub з останнім образом Ubuntu
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        maxWorkers: [2, 4]
+    steps:
+      # Клонування репозиторію у середовище
+      - uses: actions/checkout@v5
+      # Встановлення Node.js
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build packages
+        run: yarn build
+
+      # Запуск тестів з шардуванням
+      - name: Run tests shard
+        run: npx jest --maxWorkers=${{ matrix.maxWorkers }} --ci
+
+  # назва роботи
+  tests-default:
+    # Використовується хмарне середовище GitHub з останнім образом Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      # Клонування репозиторію у середовище
+      - uses: actions/checkout@v5
+      # Встановлення Node.js
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build packages
+        run: yarn build
+
+      # Запуск тестів з шардуванням
+      - name: Run tests
+        run: npx jest --ci

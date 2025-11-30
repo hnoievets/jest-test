@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`handles property matchers with deep properties 1`] = `
+{
+  "user": {
+    "createdAt": Any<Date>,
+    "name": "Jest",
+  },
+}
+`;
