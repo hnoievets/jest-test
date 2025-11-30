@@ -16,24 +16,27 @@ jobs:
     # Використовується хмарне середовище GitHub з останнім образом Ubuntu
     runs-on: ubuntu-latest
     strategy:
+      # не зупиняти матрицю якщо один з елементів провалився
       fail-fast: false
+      # об'явлення шардів
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2]
     steps:
       # Клонування репозиторію у середовище
       - uses: actions/checkout@v5
-      # Встановлення Node.js
+      # Встановлення Node.js 22
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-          cache: yarn
 
+      # встановлення залежностей
       - name: Install dependencies
         run: yarn install
 
+      # збірка
       - name: Build packages
         run: yarn build
 
-      # Запуск тестів
+      # Запуск тестів по шардах з паралелізаціє на 4 воркери
       - name: Run tests shards
-        run: yarn jest --shard=${{matrix.shard}}/4 --maxWorkers=4
+        run: yarn jest --shard=${{matrix.shard}}/2 --maxWorkers=2

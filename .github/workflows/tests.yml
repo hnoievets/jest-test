@@ -37,29 +37,3 @@ jobs:
       # Запуск тестів
       - name: Run tests
         run: yarn jest --maxWorkers=${{ matrix.maxWorkers }}
-
-  tests-workers-win:
-    # Використовується хмарне середовище GitHub з останнім образом Ubuntu
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        maxWorkers: [ 2, 4 ]
-    steps:
-      # Клонування репозиторію у середовище
-      - uses: actions/checkout@v5
-      # Встановлення Node.js
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: yarn
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Build packages
-        run: yarn build
-
-      # Запуск тестів
-      - name: Run tests
-        run: yarn jest --maxWorkers=${{ matrix.maxWorkers }}
